@@ -63,25 +63,6 @@ def predict_model(model, data):
     return pre_val
 
 # ---------------------------------------------------------------------
-# 함수 이름 : predice_model2()
-# 함수 역할 : 모델 예측 함수
-# 매개 변수 : model, data
-# ---------------------------------------------------------------------
-
-def predict_model2(model, data):
-    dataTS = torch.FloatTensor(data).reshape(1,-1)
-
-    # 검증 모드로 모델 설정
-    model.eval()
-    with torch.no_grad():
-
-        # 추론/평가
-        pre_val=model(dataTS)
-        
-    return pre_val
-
-
-# ---------------------------------------------------------------------
 # 함수 이름 : training
 # 함수 역할 : 배치 크기 만큼 데이터 로딩해서 학습 진행
 # 매개 변수 : score_func

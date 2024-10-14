@@ -22,6 +22,7 @@ def build_vocab(corpus, n_vocab, special_tokens):
     for tokens in corpus:
         counter.update(tokens)
     vocab = special_tokens
+
     for token, count in counter.most_common(n_vocab):
         vocab.append(token)
     return vocab
@@ -41,12 +42,10 @@ def trainModel(model, datasets, criterion, optimizer, device, interval):
     model.train()
     losses = list()
 
-    # for step, (input_ids, labels) in enumerate(datasets):
     for step, (input_ids, labels) in enumerate(datasets):
-        input_ids = input_ids.to(device)
-        labels = labels.to(device).unsqueeze(1)
+        input_ids = input_ids.to(device).squeeze(1)
+        labels = labels.to(device)
 
-        # logits = model(input_ids)
         logits = model(input_ids)
         loss = criterion(logits, labels)
         losses.append(loss.item())
@@ -99,4 +98,31 @@ def generateToken(dataset, load):
                 token_list.append(str(token))
         yield token_list
 
-#------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# 함수 이름 : predict_model()
+# 함수 역할 : 모델 예측 함수
+# 매개 변수 : model, data
+# ---------------------------------------------------------------------
+
+def predict_model(model, data, vocab, max_length):
+    # 데이터가 문자열이라면 토큰화 및 인덱스로 변환
+    tokens = [vocab.get(token, vocab['oov']) for token in data]  # 토큰을 인덱스로 변환
+
+    # 패딩하여 모델의 입력 형태와 일치시키기
+    if len(tokens) < max_length:
+        tokens = tokens + [vocab['pad']] * (max_length - len(tokens))
+    else:
+        tokens = tokens[:max_length]
+
+    dataTS = torch.LongTensor(tokens).unsqueeze(0)
+
+    # 검증 모드로 모델 설정
+    model.eval()
+    with torch.no_grad():
+        # 추론/평가
+        logits = model(dataTS)
+        pre_val = torch.sigmoid(logits)
+
+    prediction = (pre_val >= 0.5).float()
+
+    return prediction.item()
