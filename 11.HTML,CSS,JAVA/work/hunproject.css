@@ -1,0 +1,28 @@
+* {text-align: center;}
+html {height: 100vh;}
+body {height: 100vh; width: 100vw;}
+header {background-color: rgb(207, 255, 159);
+    height:30vh;
+}
+nav {background-color: aquamarine;
+    width: 20vw;
+    height: 70vh;
+    float: left;
+}
+section {background-color: beige;
+    display: inline-block;
+    width: 60vw;
+    height: 70vh;
+}
+aside {background-color: lightsalmon;
+    width: 20vw;
+    height: 70vh;
+    float: right;
+}
+footer {background-color: goldenrod;
+    height: 30vh;
+    clear: both;
+}
+nav:hover {
+    background-color: azure;
+}

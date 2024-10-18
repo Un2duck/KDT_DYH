@@ -1,0 +1,7 @@
+div.content{ /* div 태그의 class가 content인 것 */
+    background-image: url("../image/instaicon.png");
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: 200px;
+    height: 300px;
+}

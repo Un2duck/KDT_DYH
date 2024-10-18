@@ -1,0 +1,44 @@
+<!-- 딥러닝 (파이토치) 부분 -->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>딥러닝 (파이토치)</title>
+        <link rel="icon" href="btn.png">
+        <style>
+            a{                
+                text-decoration: none;
+                color: black;
+            }
+            li{
+                font-size: 120%;
+            }
+            a:hover{
+                color: red;
+            }
+            a dd{ /* a 밑에 있는 dd에 적용 */
+                margin: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <iframe src="hunnavi.html" width="100%" height="100" frameborder="0" scrolling="no"></iframe>
+        <!-- 내용 -->
+        <h2>날씨 예측 모델</h2> <!-- 제목 -->
+        <ul>
+            <li><a href="http://localhost:8080/cgi-bin/webWeather.py" target="subFrame1">날씨 예측!(version1)</a></li>
+            <li><a href="http://localhost:8080/cgi-bin/webWeather(3val_ver).py" target="subFrame2">날씨 예측!(version2)</a></li>
+            <li><a href="hunmain.html">뒤로 가기</a></li>
+        </ul>
+        <hr/>
+        <section>
+            <div>
+                <iframe name="subFrame1" width="500vw" height="500vh" frameborder="0" scrolling="no"></iframe>
+            </div>
+            <div>
+                <iframe name="subFrame2" width="500vw" height="500vh" frameborder="0" scrolling="no"></iframe>
+            </div>
+        </section>
+        <hr/>
+        <iframe src="hunfooter.html" width="100%" height="200" frameborder="0" scrolling="no"></iframe>
+    </body>
+</html>

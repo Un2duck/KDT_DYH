@@ -1,0 +1,14 @@
+body {
+    background-color: rgb(87, 174, 158);
+    font-family: serif;
+    color: black;
+}
+h1 {
+    border-bottom:	1px solid gray;
+    color: rgb(138, 27, 27);
+}
+em {
+    color: rgb(135, 32, 126);
+}
+p.first {color: rgb(1, 60, 1);}
+p.second {color: rgb(10, 10, 143);}
