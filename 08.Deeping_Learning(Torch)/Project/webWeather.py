@@ -1,10 +1,8 @@
-# 위에 라인 : 셀 내용을 파일로 생성/ 한번 생성후에는 마스킹
-
 # --------------------------------------------------------------------------
 # 경로 지정
 # --------------------------------------------------------------------------
 import sys
-sys.path.append(r'C:\Users\KDP-50\OneDrive\바탕 화면\Python06\MyClass')
+sys.path.append(r'C:\Users\KDP-50\OneDrive\바탕 화면\KDT_DYH\MyClass')
 
 # --------------------------------------------------------------------------
 # 모듈 로딩
@@ -17,7 +15,6 @@ from ML_preprocessing import *
 
 import os.path                          # 파일 및 폴더 관련
 import cgi, cgitb                       # cgi 프로그래밍 관련
-import joblib                           # AI 모델 관련
 import sys, codecs                      # 인코딩 관련
 from pydoc import html                  # html 코드 관련 : html을 객체로 처리?
 
@@ -31,7 +28,7 @@ cgitb.enable()                          # Web상에서 진행상태 메시지를
 # 모델 호출
 # MODEL_PATH='../Project/MyModels/'
 # MODEL_FILE = 'loss(2.01475)_score(0.73614).pth'
-MODEL_FILE = r'C:\Users\KDP-50\OneDrive\바탕 화면\Python06\08.Deeping_Learning(Torch)\Project\cgi-bin\loss(2.01475)_score(0.73614).pth'
+MODEL_FILE = r'C:\Users\KDP-50\OneDrive\바탕 화면\KDT_DYH\08.Deeping_Learning(Torch)\Project\cgi-bin\weather_chung_model_train_wb.pth'
 Weather_Model = torch.load(MODEL_FILE, weights_only=False)
 
 # 사용자 정의 함수----------------------------------------------------------
@@ -108,8 +105,6 @@ if SCRIPT_MODE:
     pthfile = os.path.dirname(__file__)+ MODEL_FILE # 웹상에서는 절대경로만
 else:
     pthfile = MODEL_FILE
-    
-# langModel = joblib.load(pthfile)
 
 # (3) WEB 사용자 입력 데이터 처리
 # (3-1) HTML 코드에서 사용자 입력 받는 form 태그 영역 객체 가져오기
