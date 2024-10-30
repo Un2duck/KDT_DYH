@@ -51,6 +51,32 @@ class ImageDataset(Dataset):
         targetTS = torch.tensor(self.targets[index], dtype=torch.uint8)
         return featureTS, targetTS
 
+
+# ---------------------------------------------------------------------
+# 모델 이름 : MenuDataset
+# 부모클래스 : Dataset 
+# 매개 변수 : 
+# ---------------------------------------------------------------------
+# class MenuDataset(Dataset):
+
+#     def __init__(self, featureDF, targetDF):
+#         self.featureDF=featureDF
+#         self.targetDF=targetDF
+#         self.n_rows=featureDF.shape[0]
+#         self.n_features=featureDF.shape[1]
+
+#     def __len__(self):
+#         return self.n_rows
+
+#     def __getitem__(self, index):
+#         # 텐서화
+#         featureTS = torch.FloatTensor(self.featureDF.iloc[index])
+#         targetTS = torch.FloatTensor(self.targetDF.iloc[index])
+
+#         # 피쳐와 타겟 반환
+#         return featureTS, targetTS
+
+
 # ---------------------------------------------------------------------
 # 모델 이름 : MyRegModel
 # 부모클래스 : nn.Module 
@@ -206,6 +232,7 @@ class FashionCNN(nn.Module):
 # 모델 이름 : MenuMCFModel
 # 부모클래스 : nn.Module 
 # 매개 변수 : 
+# 클래스 설명 : Flask 프로젝트용 클래스 (날씨별 배달건수 예측모델)
 # ---------------------------------------------------------------------
 
 class MenuMCFModel(nn.Module):

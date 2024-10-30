@@ -1,0 +1,27 @@
+<!-- 딥러닝 (OpenCV) 부분 -->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>딥러닝 (OpenCV)</title>
+        
+        <!-- 외부 CSS 파일 설정 -->
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/openCV.css')}}">
+
+    </head>
+    <body>
+        <iframe src="hunnavi.html" width="100%" height="100" frameborder="0" scrolling="no"></iframe>
+        <h2>과일 판별 모델</h2> <!-- 제목 -->
+        <ul>
+            <li><a href="http://localhost:8080/cgi-bin/web4fruits.py" target="subFrame">과일 판별!</a></li>
+            <li><a href="hunmain.html">뒤로 가기</a></li>
+        </ul>
+        <hr/>
+        <section>
+            <div>
+                <iframe name="subFrame" width="500vw" height="500vh" frameborder="0" scrolling="no"></iframe>
+            </div>
+        </section>
+        <hr/>
+        <iframe src="hunfooter.html" width="100%" height="200" frameborder="0" scrolling="no"></iframe>
+    </body>
+</html>

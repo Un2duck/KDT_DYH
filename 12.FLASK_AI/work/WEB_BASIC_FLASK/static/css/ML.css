@@ -1,0 +1,13 @@
+a {                
+    text-decoration: none;
+    color: black;
+}
+li {
+    font-size: 120%;
+}
+a:hover {
+    color: red;
+}
+a dd { /* a 밑에 있는 dd에 적용 */
+    margin: 10px;
+}

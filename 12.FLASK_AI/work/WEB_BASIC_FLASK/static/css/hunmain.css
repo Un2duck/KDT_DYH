@@ -1,0 +1,8 @@
+div.content { /* div 태그의 class가 content인 것 */
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: 200px;
+    height: 300px;
+    text-align: left;
+    font-size: 25px;
+}

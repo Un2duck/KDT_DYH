@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBWEB</title>
+</head>
+<body>
+    <h1>질문 상세보기</h1>
+    <div id="question">
+        <label>제목</label>
+        {{question.subject}}<br><br>
+        
+        <label>내용</label>
+        {{question.content}}<br><br>
+        <a href="https://www.naver.com">네이버로 이동하기</a>
+    </div>
+    <div>
+        <!-- <form action="" method="POST"> -->
+        <form action="{{ url_for('answer.create', question_id=question.id) }}" method="POST">
+            <textarea row="5" cols="20" placeholder="답글입력"></textarea>
+            <input type="submit" value="답변등록">
+        </form>
+    </div>
+</body>
+</html>
