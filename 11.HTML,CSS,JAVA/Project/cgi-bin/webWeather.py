@@ -67,19 +67,6 @@ def showHTML(text, msg):
 # 매개 변수 : model, data
 # ---------------------------------------------------------------------
 
-# def predict_model(model, data):
-#     data = [data.split(',')]
-#     dataTS = torch.FloatTensor(data).reshape(1,-1)
-
-#     # 검증 모드로 모델 설정
-#     model.eval()
-#     with torch.no_grad():
-
-#         # 추론/평가
-#         pre_val=model(dataTS)
-#     # return pre_val
-#     print(f"{msg}")
-
 def predict_model(model, data):
     try:
         print("Data received for prediction:", data) # 디버깅용 로그

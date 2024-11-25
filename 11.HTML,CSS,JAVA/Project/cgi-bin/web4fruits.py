@@ -88,19 +88,6 @@ def showHTML(msg):
 # 매개 변수 : model, img
 # ---------------------------------------------------------------------
 
-# def predict_model(model, img):
-#     img = [img.split(',')]
-#     dataTS = torch.FloatTensor(img).reshape(1,-1)
-
-#     # 검증 모드로 모델 설정
-#     model.eval()
-#     with torch.no_grad():
-
-#         # 추론/평가
-#         pre_val=model(dataTS)
-#     # return pre_val
-#     print(f"{msg}")
-
 def predict_model(model, img):
     try:
 
