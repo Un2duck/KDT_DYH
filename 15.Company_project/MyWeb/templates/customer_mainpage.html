@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일반 고객 메인화면</title>
+    <link rel="stylesheet" href="static/style3.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script> 
+    <style>
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 메인 컨텐츠 스타일 */    
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            gap: 40px; /* 박스 간 간격 */
+            
+        }
+        
+        .content-box {
+            /* background-color: white; */
+            width: 80%; /* 화면의 80% 너비 */
+            max-width: 1290px; /* 최대 너비 */
+            height: 150px; /* 고정 높이 */
+            color: white;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            position: relative; /* 내부 요소 배치를 위해 position 설정 */
+            background-color: white;
+            margin-right: 250px;
+        }
+        
+        #box-title {
+            position: absolute;
+            top: 10px; /* 상단 여백 */
+            left: 15px; /* 왼쪽 여백 */
+            margin: 0;
+            color:rgb(16, 49, 120);
+            font-weight: bold;
+        }
+        
+        .board-box {
+            background-color: white;
+            width: 80%;
+            max-width: 1250px;
+            height: 500px; /* 고정 높이 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-right: 250px;
+            position: relative; /* absolute 요소의 기준점 설정 */
+            overflow: hidden; /* 박스 밖으로 튀어나오는 요소 숨김 */
+        }
+        
+        .board-header {
+            margin-bottom: 70px; /* 제목과 내용 사이 간격 */
+        }
+
+        .plus-icon {
+            position: absolute;
+            top: 15px; /* 상단 여백 */
+            right: 15px; /* 오른쪽 여백 */
+            width: 15px; /* "+" 아이콘 크기 */
+            height: 15px;
+            cursor: pointer;
+        }
+
+        #monitoring-box {
+            height: auto ;
+            position: relative;
+        }
+    
+
+        #myChart {
+            padding-top: 15px;
+            padding-left: 30px;
+            padding-right: 30px;
+            margin-bottom: 20px;
+            width: 700px;
+            height: 550px;
+            max-height: 550px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        #announcement {
+            display: flex;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            height: 40px;  
+            background-color: white;
+            border-radius: 30px;
+            border: 1.5px solid rgba(20, 88, 235, 0.559);
+            margin-bottom: 10px;
+            margin-top: 100px;
+            margin-right: 270px;
+        }
+        
+        #announcement-content {
+            color: black;
+            font-size: 13pt;
+            margin-top: 7px;
+            margin-left: 10px;
+        }
+
+        .megaphone-icon {
+            margin-left: 12px;
+            margin-top: 10px;
+            width: 20px;
+            height: 20px;   
+        }
+
+        #status-window {
+            display: flex;
+            margin-left: 1000px;
+            width: 60px;
+            margin-top: 10px;
+            margin-bottom: 50px;
+        }
+
+        .circle {
+            position: absolute;
+            margin-top: 34.5px;
+            margin-left: 195px;
+            width: 17px; 
+            height: 17px;
+        }
+
+        .status {
+            position: absolute;
+            font-size: 12pt;
+            font-weight: bold;
+            color: rgb(16, 49, 120);
+            margin-top: 30px;
+        }
+
+        /* 달력 부분 */
+
+        .calendar-container {
+            width: 230px;
+            margin: 10px auto;
+            text-align: center;
+            border: 1px solid #aea9a9;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .calendar-header {
+            display: flex;
+            font-size: 13px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .calendar-header button {
+            background-color: rgba(20, 88, 235, 0.559);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .calendar-header button:hover {
+            background-color: rgba(20, 88, 235, 0.8);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            margin-top: 10px;
+            gap: 1px;
+        }
+
+        .day, .weekday {
+            padding: 1px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .weekday {
+            font-weight: bold;
+            background-color: #e0e0e0;
+            cursor: default;
+        }
+
+        .day.empty {
+            background-color: #f9f9f9;
+            border: none;
+            cursor: default;
+        }
+
+        .day:hover {
+            background-color: #e0f7fa;
+        }
+
+        .selected-week {
+            background-color: #cce4ff;
+            font-weight: bold;
+        }
+
+        .hover-week {
+            background-color: #e0f7fa;
+        }
+
+        /* 게시판 스타일 */
+        .board-box {
+            background-color: white;
+            width: 80%;
+            max-width: 1250px;
+            height: 380px; /* 고정 높이 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-right: 250px;
+            position: relative; /* absolute 요소의 기준점 설정 */
+            overflow: hidden; /* 박스 밖으로 튀어나오는 요소 숨김 */            
+        }
+
+        .box-title {
+            position: absolute;
+            top: 20px; /* 상단 여백 */
+            left: 20px; /* 왼쪽 여백 */
+            margin: 0;
+            color: rgba(20, 88, 235, 1); /* 파란색 텍스트 */
+            font-size: 30px; /* 글씨 크기 */
+            font-weight: bold;
+        }
+
+        .plus-icon {
+            position: absolute;
+            top: 30px; /* 제목과 수평 정렬 */
+            right: 30px; /* 오른쪽 여백 */
+            width: 18px; /* "+" 아이콘 크기 */
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .name, .status-text {
+            font-weight : 550;
+        }
+
+        
+
+    </style>
+</head>
+<body class="noto-sans-kr">
+        <!-- 헤더 -->
+        <header>
+            <!-- 파란색 메뉴 영역 -->
+            <div class="menu-container">
+                <a href="customer_mainpage">
+                    <img src="{{ url_for('static', filename='image/logo.png') }}" alt="로고" class="logo">
+                </a>
+                <div class="menu">
+                    <a href="notice_customer" class="notice">공지</a>
+                    <a href="customer_mainpage" class="graph">모니터링</a>
+                    <a href="board_customer" class="board">게시판</a>
+                </div>
+                <a href="/" class="logout">로그아웃</a>
+            </div>
+        </header>
+        <script>
+            // DOM 요소 가져오기
+            const menuContainer = document.querySelector('.menu-container');
+        
+            // 스크롤 이벤트 리스너 추가
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 0) {
+                    menuContainer.classList.add('scrolled'); // 클래스 추가
+                } else {
+                    menuContainer.classList.remove('scrolled'); // 클래스 제거
+                }
+            });
+        </script>
+
+        <!-- 오른쪽 고정 박스 -->
+        <div class="right-box">
+            <div class="calendar-container">
+        <div class="calendar-header">
+            <button onclick="changeMonth(-1)">◀ 이전</button>
+            <h3 id="month-year" data-year="{{ year }}" data-month="{{ month }}">{{ year }}년 {{ month }}월</h3>
+            <button onclick="changeMonth(1)">다음 ▶</button>
+        </div>
+        <!-- 달력 부분 -->
+        <div id="selected-dates-display" style="margin: 20px; font-size: 14px; color: #333;">선택된 날짜 : </div>
+            <div class="calendar-grid">
+
+                <!-- 요일 표시 -->
+                <div class="weekday">일</div>
+                <div class="weekday">월</div>
+                <div class="weekday">화</div>
+                <div class="weekday">수</div>
+                <div class="weekday">목</div>
+                <div class="weekday">금</div>
+                <div class="weekday">토</div>
+
+                {% for week in month_days %}
+                    {% for day in week %}
+                        {% if day == 0 %}
+                            <div class="day empty"></div>
+                        {% else %}
+                            <!-- <div class="day"
+                                data-year="{{ year if day > 0 else next_year }}"
+                                data-month="{{ month if day > 0 else next_month }}"
+                                onclick="selectWeek(this)">
+                                {{ day }}
+                            </div> -->
+                            <div class="day"
+                                onmouseover="hoverWeek(this)"
+                                onmouseout="resetHover(this)"
+                                onclick="selectWeek(this)">
+                                {{ day }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            <!-- 달력 작동부분 -->
+            <script>
+                // 전역 변수
+                let weeks = [];
+                
+                const monthYearElement = document.getElementById('month-year');
+                currentYear = parseInt(monthYearElement.dataset.year); // 현재 연도
+                currentMonth = parseInt(monthYearElement.dataset.month); // 현재 월 (month = 6월로 가정)
+
+                function changeMonth(offset) {
+                    
+                    currentMonth += offset;
+                    if (currentMonth < 1) {
+                        currentMonth = 12;
+                        currentYear--;
+                    } else if (currentMonth > 12) {
+                        currentMonth = 1;
+                        currentYear++;
+                    }
+
+                    window.location.href = `/customer_mainpage?year=${currentYear}&month=${currentMonth}`;
+                }
+        
+                function hoverWeek(dayElement) {
+                    const weekDays = getWeekDays(dayElement);
+                    weekDays.forEach(day => day.classList.add('hover-week'));
+                }
+        
+                function resetHover(dayElement) {
+                    const weekDays = getWeekDays(dayElement);
+                    weekDays.forEach(day => day.classList.remove('hover-week'));
+                }
+        
+                function selectWeek(dayElement) {
+                    document.querySelectorAll('.day').forEach(day => day.classList.remove('selected-week'));
+
+                    const weekDays = getWeekDays(dayElement);
+                    weeks = weekDays; // 선택한 주차 저장
+                    weekDays.forEach(day => day.classList.add('selected-week'));
+
+                    // 활성화된 날짜들 출력
+                    const selectedDates = weekDays.map(day => {
+                        if (!day.classList.contains('empty')) {
+                            const dayNumber = day.textContent.trim();
+                            return `${currentYear}-${String(currentMonth)}-${String(dayNumber)}`; // 2024-6-1
+                            // return `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`; 2024-06-01
+                        }
+                    }).filter(Boolean);
+
+                    // 선택된 날짜를 HTML에 표시
+                    const displayElement = document.getElementById('selected-dates-display');
+                    displayElement.textContent = `선택된 날짜: ${selectedDates.join(', ')}`;
+                }
+
+                // function selectWeek(dayElement) {
+                //     document.querySelectorAll('.day').forEach(day => day.classList.remove('selected-week'));
+
+                //     const weekDays = getWeekDays(dayElement);
+                //     weeks = weekDays; // 선택한 주차 저장
+                //     const selectedDates = weekDays.map(day => {
+                //         const dayNumber = day.textContent.trim();
+                //         const year = day.dataset.year;
+                //         const month = day.dataset.month;
+                //         return `${year}-${String(month).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+                //     }).filter(Boolean);
+
+                //     document.getElementById('selected-dates-display').textContent = `선택된 날짜: ${selectedDates.join(', ')}`;
+                // }
+
+                function getWeekDays(dayElement) {
+                    const parentGrid = document.querySelector('.calendar-grid');
+                    const allDays = Array.from(parentGrid.children).slice(7); // 첫 번째 행(요일)을 제외한 모든 날
+                    const dayIndex = allDays.indexOf(dayElement); // 선택한 날짜의 인덱스
+                    
+                    // 현재 월과 다음 월 데이터 가져오기
+                    // const currentMonthDays = allDays.filter(day => !day.classList.contains('empty'));
+                    // const nextMonthDays = Array.from(document.querySelectorAll('.day.empty')).filter(day => day.textContent.trim() !== '');
+
+                    // // 일~월 묶음 선택
+                    // const weekStart = Math.floor(dayIndex / 7) * 7;
+                    // return allDays.slice(weekStart, weekStart + 7);
+
+                    // 선택한 날짜를 시작 기준으로 7일
+                    const start = Math.max(0, dayIndex);
+                    // const end = Math.min(allDays.length, dayIndex + 7);
+                    const end = dayIndex + 7;
+                    
+                    let weekDays = allDays.slice(start, end);
+                    
+                    // 다음 달에서 부족한 날짜를 채움
+                    // if (weekDays.length < 7) {
+                    //     const extraDays = nextMonthDays.slice(0, 7 - weekDays.length);
+                    //     weekDays = weekDays.concat(extraDays);
+                    // }
+                    return weekDays;
+                }
+                
+                function getSelectedWeeks() {
+                    return weeks;
+                }
+
+            </script>
+    </div>
+            
+        </div>
+        <!-- 메인 컨텐츠 -->
+        <main class="main-container">             
+            <div id="announcement">
+                <img src="{{ url_for('static', filename='image/megaphone.png')}}" class="megaphone-icon"></a>
+                <h5 id="announcement-content">
+                    공지 : 
+                <a href="/notice_content_customer/{{ announcement['idx'] }}" style="text-decoration: none; color: #333;">
+                    {{ announcement['title']}}
+                </a>
+                </h5>
+
+            </div>
+            
+            <div class="content-box" id="monitoring-box">
+                <div class="monitoring-title">
+                    <h2 class="box-title">모니터링</h2>
+                </div>
+                <div id="status-window">
+                    {% if cnt >= 2 %}
+                        <p class="status">
+                            <span class="name">이민하</span> 
+                            <span class="description">님의 현재 상태 :</span> 
+                            <span class="status-text">위험</span>
+                        </p>
+                        <img src="{{ url_for('static', filename='image/red_circle.png')}}" class="circle">
+                    {% elif cnt >= 1 %}
+                        <p class="status">
+                            <span class="name">이민하</span> 
+                            <span class="description">님의 현재 상태 :</span> 
+                            <span class="status-text">주의</span>
+                        </p>    
+                        <img src="{{ url_for('static', filename='image/yellow_circle.png')}}" class="circle">
+                    {% else %}
+                        <p class="status">
+                            <span class="name">이민하</span> 
+                            <span class="description">님의 현재 상태 :</span> 
+                            <span class="status-text">정상</span>
+                        </p>
+                        <img src="{{ url_for('static', filename='image/green_circle.png')}}" class="circle">
+                    {% endif %}
+                </div>                
+                <canvas id="myChart" width="400" height="200"></canvas>
+                <script>
+                    function createChart(labels, values1, values2, values3, values4, elec_errorMargin, water_errorMargin) {
+                        const ctx = document.getElementById('myChart').getContext('2d');
+                
+                        if (window.myChart && typeof window.myChart.destroy === 'function') {
+                            window.myChart.destroy();
+                        }
+
+                        const elec_upperBound = values3.map((value, index) => value + elec_errorMargin[index]);
+                        const elec_lowerBound = values3.map((value, index) => value - elec_errorMargin[index]);
+                
+                        const water_upperBound = values4.map((value, index) => value + water_errorMargin[index]);
+                        const water_lowerBound = values4.map((value, index) => value - water_errorMargin[index]);
+                        
+                        
+
+
+                        window.myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: '수도',
+                                        data: values1,
+                                        backgroundColor: 'rgba(53, 183, 255, 0.4)',
+                                        borderColor: '#35B7E0',
+                                        borderWidth: 3,
+                                        tension: 0.3,
+                                        yAxisID: 'y1',
+                                        group: 'water'
+                                    },
+                                    {
+                                        label: '수도 오차 범위',
+                                        data: water_upperBound,
+                                        borderColor: 'rgba(232, 212, 0, 0)',
+                                        backgroundColor: 'rgba(124, 156, 255, 0.2)',
+                                        fill: '+1',
+                                        tension: 0.4,
+                                        yAxisID: 'y1',
+                                        group: 'water'
+                                    },
+                                    {
+                                        label: '오차 범위2',
+                                        data: water_lowerBound,
+                                        borderColor: 'rgba(232, 212, 0, 0)',
+                                        backgroundColor: 'rgba(124, 156, 255, 0.2)',
+                                        fill: '-1',
+                                        tension: 0.4,
+                                        yAxisID: 'y1',
+                                        group: 'water'
+                                    },
+                                    {
+                                        label: '전기',
+                                        data: values2,
+                                        backgroundColor: 'rgba(229, 163, 6, 0.4)',
+                                        borderColor: '#E5A306',
+                                        borderWidth: 3,
+                                        tension: 0.3,
+                                        yAxisID: 'y2',
+                                        group: 'electric'
+                                    },
+                                    {
+                                        label: '전기 오차 범위',
+                                        data: elec_upperBound,
+                                        borderColor: 'rgba(232, 212, 0, 0)',
+                                        backgroundColor: 'rgba(232, 212, 0, 0.2)',
+                                        fill: '+1',
+                                        tension: 0.4,
+                                        yAxisID: 'y2',
+                                        group: 'electric'
+                                    },
+                                    {
+                                        label: '오차 범위2',
+                                        data: elec_lowerBound,
+                                        borderColor: 'rgba(232, 212, 0, 0)',
+                                        backgroundColor: 'rgba(232, 212, 0, 0.2)',
+                                        fill: '-1',
+                                        tension: 0.4,
+                                        yAxisID: 'y2',
+                                        group: 'electric'
+                                    },
+                                ],
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                animation: {
+                                    duration: 1500,
+                                    easing: 'easeOutQuart'
+                                },
+                                plugins: {
+                                    legend: {
+                                        labels: {
+                                            filter: function(legendItem, chartData) {
+                                                return legendItem.text !== '오차 범위2'
+                                            },
+                                            font: {
+                                                family: "'Noto Sans KR', sans-serif"
+                                            },
+                                        },
+                                        onClick: function(e, legendItem) {
+                                            const chart = this.chart;
+                                            const datasetIndex = legendItem.datasetIndex;
+                                            const group = chart.data.datasets[datasetIndex].group;
+
+                                            chart.data.datasets.forEach(function(dataset, index) {
+                                                if (dataset.group === group) {
+                                                    dataset.hidden = !dataset.hidden; 
+                                                    dataset.animation = {
+                                                        duration: 1500,  
+                                                        easing: 'easeInOutQuad',
+                                                    };
+                                                }
+                                            });
+
+                                            chart.update();
+                                        }                                        
+                                    },
+                                },
+                                
+
+
+                                scales: {
+                                    x: {
+                                        grid: {
+                                            display: false
+                                        },
+                                        
+                                        ticks: {
+                                            font: {
+                                                family: "'Noto Sans KR', sans-serif",
+                                            },
+                                        },
+                                    },
+                                    y1: {
+                                        type: 'linear',
+                                        position: 'left',
+                                        beginAtZero: true,
+                                        grid: {
+                                            display: false
+                                        },
+                                        min: 0,
+                                        max: 500,
+                                        title: {
+                                            display: true,
+                                            text: '수도 사용량 (L)',
+                                            color: '#000000',
+                                            font: {
+                                                family: "'Noto Sans KR', sans-serif",
+                                                size: 14,
+                                            }
+                                        }
+                                    },
+                                    y2: {
+                                        type: 'linear',
+                                        position: 'right',
+                                        beginAtZero: true,
+                                        grid: {
+                                            display: false
+                                        },
+                                        min: 1,
+                                        max: 2,
+                                        title: {
+                                            display: true,
+                                            text: '전기 사용량 (kWh)',
+                                            color: '#000000',
+                                            font: {
+                                                family: "'Noto Sans KR', sans-serif",
+                                                size: 14,
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                
+                    // Flask에서 데이터를 직접 삽입
+                    const labels = ['6/1',' ',' ',' ', '6/2', ' ',' ', ' ','6/3',' ',' ',' ','6/4',' ', ' ', ' ','6/5',' ', ' ', ' ', '6/6',' ', ' ', ' ', '6/7',' ', ' ', ' ']; // 예: 라벨 데이터
+                    const values1 = {{ output1|tojson }}; // 수도 데이터
+                    const values2 = {{ output2|tojson }}; // 전기 데이터
+                    const values3 = {{ predict_elec|tojson }};
+                    const values4 = {{ predict_water|tojson }};
+                    const ElecErrorMargin = {{ ElecErrorMargin|tojson }};
+                    const WaterErrorMargin = {{ WaterErrorMargin|tojson }};
+                    createChart(labels, values1, values2, values3, values4, ElecErrorMargin, WaterErrorMargin);
+                    
+                    const selectedWeeks = getSelectedWeeks(); // 함수 호출로 변수 값 가져오기
+                        
+                    if (selectedDates && selectedDates.length > 0) {
+                            labels = selectedDates; // 선택된 주차를 라벨로 사용
+                            createChart(labels, values1, values2, values3, values4, ElecErrorMargin, WaterErrorMargin);
+                        } 
+                </script>
+                
+            </div>
+
+        <!-- 게시판 영역 -->
+            <div class="board-box">
+                <div class="board-header">
+                    <h2 class="box-title">게시판</h2>
+                    <a href="board_customer">
+                        <img src="{{ url_for('static', filename='image/plus.png') }}" alt="추가 버튼" class="plus-icon">
+                    </a>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;" class="board-table">
+                    <thead>
+                        <tr style="background-color: rgba(169, 199, 252, 0.8); border-bottom: 2px solid #ddd;">
+                            <th style="text-align: left; padding: 10px;">번호</th>
+                            <th style="text-align: left; padding: 10px;">제목</th>
+                            <th style="text-align: left; padding: 10px;">작성자</th>
+                            <th style="text-align: left; padding: 10px;">작성일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for board in board_data %}
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ board[0] }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                <a href="board_content_customer/{{ board[0] }}" style="text-decoration: none; color: #333;">
+                                    {{ board[1] }}
+                                </a>
+                            </td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ board[2] }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ board[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            
+        </main>
+        <!-- 푸터 -->
+        <p> {{ weeks }} </p>
+    <footer>
+        <img src="{{ url_for('static', filename='image/범일로고.png') }}" alt="범일로고" class="footer-logo-left">
+        <p>2024 Quasar. All rights reserved.</p>
+        <img src="{{ url_for('static', filename='image/경대로고.png') }}" alt="경대로고" class="footer-logo">
+    </footer>
+</body>
+</html>

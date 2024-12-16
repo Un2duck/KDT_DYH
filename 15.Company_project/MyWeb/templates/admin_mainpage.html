@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 메인화면</title>
+    <link rel="stylesheet" href="static/style3.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script> 
+    <style>
+        /* 메인 컨텐츠 스타일 */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            gap: 40px; /* 박스 간 간격 */
+            margin-top: 50px; /* 메인 컨텐츠 상단 여백 */
+        }
+
+        /* 모니터링 스타일 */
+        .monitoring-box {
+            background-color: white;
+            width: 80%; /* 화면의 80% 너비 */
+            max-width: 1250px; /* 최대 너비 */
+            height: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            position: relative; /* 내부 요소 배치를 위해 position 설정 */
+            margin-right: 250px;
+            padding: 20px;
+            
+        }
+
+        .board-box {
+            background-color: white;
+            width: 80%;
+            max-width: 1250px;
+            height: 380px; /* 고정 높이 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-right: 250px;
+            position: relative; /* absolute 요소의 기준점 설정 */
+            overflow: hidden; /* 박스 밖으로 튀어나오는 요소 숨김 */
+        }
+
+        .box-title {
+            position: absolute;
+            top: 20px; /* 상단 여백 */
+            left: 20px; /* 왼쪽 여백 */
+            margin: 0;
+            color: rgba(20, 88, 235, 1); /* 파란색 텍스트 */
+            font-size: 30px; /* 글씨 크기 */
+            font-weight: bold;
+        }
+
+        .plus-icon {
+            position: absolute;
+            top: 30px; /* 제목과 수평 정렬 */
+            right: 30px; /* 오른쪽 여백 */
+            width: 18px; /* "+" 아이콘 크기 */
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        /* 제목과 게시판 내용 간 간격 추가 */
+        .board-header {
+            margin-bottom: 70px; /* 제목과 내용 사이 간격 */
+        }
+
+        /* 모니터링 그리드 레이아웃 */
+        #building-form {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5열 그리드 */
+            gap: 10px;
+            margin-top: 35px;
+            margin-left: 35px;
+            
+        }
+
+        .building {
+            text-align: center;
+            padding: 10px;
+            font-size: 17pt;
+            font-weight: 400;
+            color: black;
+            border-radius: 5px;
+            border: none;
+            margin-top: 20px;
+            width: 140px;
+        }
+
+        .building:hover {
+            transform: scale(1.1); /* 호버 시 크기 확대 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 호버 시 그림자 효과 */
+        }
+
+        /* 선택된 동 스타일 */
+        .selected-building {
+            background-color: #2196f3; /* 선택된 동의 배경색 */
+            color: black; /* 선택된 동의 글자색 */
+            font-weight: bold; /* 강조된 글씨 */
+            transform: scale(1.2); /* 약간 커짐 효과 */
+            box-shadow: 0 13px 13px rgba(0, 0, 0, 0.2);
+            border: 5px #0471FF  ;
+            
+        }
+
+        h3 {
+            margin-left: 35px;
+        }
+
+        .building-status {
+            margin-bottom: 30px; /* 동 버튼과 아래 층 글씨 간의 간격 */
+            width: 80%;
+            margin-left: 130px;
+        }
+
+        /* 층별 선택 버튼
+        .floor-buttons {
+            display: flex;
+            justify-content: left;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .floor-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            background-color: #e0e0e0;
+        }
+
+        .floor-button.active {
+            background-color: #2196f3;
+            color: white;
+        } */
+
+        /* 아파트 구조 스크롤 영역 */
+        .room-container {
+            width: 80%;
+            display: grid; /* 그리드 배치 */
+            grid-template-columns: repeat(2, 1fr); /* 한 줄에 2개의 방 */
+            gap: 5px; /* 방 간격 */
+            justify-content: center;
+            margin: 10px 0; /* 위아래 여백 */
+            margin-left: 10px;
+
+            border: 10px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-top: 20px;
+            padding-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 방 전체에 그림자 추가 */
+            transition: box-shadow 0.3s ease; /* 마우스 오버 시 부드럽게 그림자 변환 */
+        }
+        
+        .apartment-grid {
+            display: inline-flex; /* 내부 요소를 가로로 배치 */
+            gap: 30px; /* 층 간 간격 */
+            text-align: center;
+            
+        }
+
+        .floor h5{
+            font-weight: bold;
+            font-size: 25px;
+            min-width: 200px;
+            text-align: center;
+            color: rgba(20, 88, 235, 1);
+            margin-top: 0px;
+            margin-bottom: 20px;
+
+        }
+
+        .room {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            background-color: #2196f3; /* 기본 방 색상 */
+            margin: 10px;
+            margin-left: 15px;
+            position: relative;
+            
+            
+        }
+
+        .room-info {
+            position: absolute;
+            bottom: -20px; /* 방 아래에 표시 */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 15px;
+            color: black; /* 텍스트 색상 */
+            text-align: center;
+            white-space: nowrap;
+            
+        }
+        /* 방에 마우스 오버 시 입체감 강조 */
+        .room:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 마우스 오버 시 그림자 강화 */
+            transform: scale(1.02); /* 약간 크기 확대 */
+        }
+
+
+        /* 팝업 영역 */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            width: 800px;
+            height: 600px;
+            display: none;
+        }
+        .popup-content {
+            display: flex;
+            flex-direction: column; /* 세로 정렬 */
+            align-items: flex-start; /* 왼쪽 정렬 */
+            gap: 3px;
+        }
+        .popup-content p {
+            margin: 3px 0; /* 위아래 여백 2px */
+            padding: 0; /* 내부 여백 제거 */
+            line-height: 1.2; /* 줄 간격 조정 */
+            margin-left: 100px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            max-width: 700px;
+            margin-left: 50px;
+        }
+
+        .popup .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: red;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* 상태 색상 */
+        .danger {
+            background-color: rgba(255,77,77,0.8); /* 경고 */
+        }
+
+        .caution {
+            background-color: rgba(255,193,7,0.7); /* 주의 */
+        }
+
+        .normal {
+            background-color: rgba(169, 199, 252, 0.8); /* 정상 */
+        }
+        
+        /* 특정 층 강조 */
+        .highlight {
+            outline: 2px solid #2196f3;
+            outline-offset: 5px;
+        }
+
+        .circle {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        /* 상태 표시 레이아웃 수정 */
+        .status-summary {
+            margin-bottom: 0;
+            position: relative;
+            
+        }
+
+        .danger-info {
+            margin-top: 100px; /* 위 요소 아래로 이동 */
+            position: relative; /* 위치 정렬 */
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* 원과 글씨 간 간격 */
+        }
+
+        #announcement {
+            display: flex;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            height: 40px;  
+            background-color: white;
+            border-radius: 30px;
+            border: 1.5px solid rgba(20, 88, 235, 0.559);
+            margin-bottom: 10px;
+            margin-right: 270px;
+        }
+        
+        #announcement-content {
+            color: black;
+            font-size: 13pt;
+            margin-top: 7px;
+            margin-left: 10px;
+        }
+
+        .megaphone-icon {
+            margin-left: 12px;
+            margin-top: 10px;
+            width: 20px;
+            height: 20px;   
+        }
+
+        .board-table {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .board-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .board-row.header {
+            background-color: #003366;
+            color: white;
+            font-weight: bold;
+        }
+
+        .board-column {
+            flex: 1;
+            text-align: center;
+            font-size: 14px;
+        }
+
+
+        footer {
+            margin-top: 100px;
+        }
+
+        .status {
+            display: flex;
+        }
+
+        #popup-status{
+            font-weight: bold;
+        }
+        
+
+        #popup-status-img {
+            margin-top: 5px;
+            margin-left: 7px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header>
+        <!-- 로고 영역 -->
+        <div class="menu-container">
+            <a href="admin_mainpage">
+                <img src="{{ url_for('static', filename='image/logo.png') }}" alt="로고" class="logo">
+            </a>
+            <div class="menu">
+                <a href="notice_admin" class="notice">공지</a>
+                <a href="admin_mainpage" class="graph">모니터링</a>
+                <a href="board_admin" class="board">게시판</a>
+            </div>
+            <a href="/" class="logout">로그아웃</a>
+        </div>
+    </header>
+
+    <!-- 오른쪽 고정 박스 -->
+    <div class="right-box">
+        <div class="status-summary">
+            <h3 class="right-box-title">현황판</h3>
+            <div class="status-indicator">
+                <div class="circle danger"></div>
+                <span>위험: 1</span>
+            </div>
+            <div class="status-indicator">
+                <div class="circle caution"></div>
+                <span>주의: 4</span>
+            </div>
+            <div class="status-indicator">
+                <div class="circle normal" style="background-color: green;"></div>
+                <span>정상: 495</span>
+            </div>
+        </div>
+        
+        <div class="danger-info">
+            <p><strong><img src="{{ url_for('static', filename='image/red_circle.png') }}" class="circle">현재 위험:</strong></p>
+            {% if danger_info %}
+            <p>{{ danger_info['dong'] }}동 {{ danger_info['ho'] }}호</p>
+            {% else %}
+            <p>위험 상태의 세대가 없습니다.</p>
+            {% endif %}
+        </div>
+        
+    </div>
+    
+    <!-- 메인 컨텐츠 -->
+    <main class="main-container">
+        <div id="announcement">
+           
+                <img src="{{ url_for('static', filename='image/megaphone.png') }}" class="megaphone-icon">
+                <h5 id="announcement-content">
+                    공지 : 
+                <a href="/notice_content_admin/{{ announcement['idx'] }}" style="text-decoration: none; color: #333;">
+                    {{ announcement['title']}}
+                </a>
+                </h5>
+        </div>
+        
+        
+  
+            
+        </div>
+        <!-- 모니터링 영역 -->
+        <div class="monitoring-box">
+            
+            <h2 class="box-title">모니터링</h2>
+            
+            <div class="container">
+
+                <!-- 상단 건물 상태 -->
+                <div class="building-status">
+                    <form method="POST" id="building-form">
+                        {% for building, status in building_status.items() %}
+                        <button type="submit" name="building" value="{{ building }}"
+                        class="building {{ status }} {{ 'selected-building' if selected_building == building else '' }}">
+                            {{ building }}동
+                        </button>
+                        {% endfor %}
+                    </form>
+                </div>
+                
+                <!-- 층별 선택 버튼
+                <div class="floor-buttons">
+                    {% for floor in floors.keys() %}
+                    <button type="button" onclick="scrollToFloor('{{ floor }}')" class="floor-button">
+                        {{ floor }}
+                    </button>
+                    {% endfor %}
+                </div> -->
+                
+                <!-- 하단 아파트 구조 -->
+                <div class="apartment-grid">
+                    {% for floor_number, rooms in combined_floors.items() %}
+                    <div id="floor-{{ floor_number }}" class="floor">
+                        <h3 style="position: relative; left: -10px;">{{ floor_number }}층</h3>
+                        <div class="room-container">
+                            <!-- 신호등 영역 -->
+                            {% for room in rooms %}
+                            <div class="room {{ room.status }}" onclick="showPopup('{{ room.ho }}')">
+                                <!-- 호수 표기 영역 -->
+                                <span class="room-info">{{ room.ho }}호</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- 관리 대상 팝업 영역 -->
+                        <div id="popup" class="popup hidden">
+                            <div class="popup-content">
+                                <span class="close-btn" onclick="closePopup()">×</span>
+                                <h5 id="popup-ho">호수: </h5>
+                                <p><strong>이름: </strong> <span id="popup-name"></span></p>
+                                <p><strong>전화번호: </strong> <span id="popup-phone"></span></p>
+                                <div class="status">
+                                    <p><strong>상태: </strong> <span id="popup-status"></span></p>
+                                    <img id="popup-status-img" src="" alt="상태 이미지" style="width: 17px; height: 17px;">
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="popup-chart"></canvas>
+                                    <script>
+                                        function createChart(labels, values1, values2, values3, values4, elec_errorMargin, water_errorMargin) {
+                                            const ctx = document.getElementById('popup-chart').getContext('2d');
+                                    
+                                            if (window.myChart && typeof window.myChart.destroy === 'function') {
+                                                window.myChart.destroy();
+                                            }
+                    
+                                            const elec_upperBound = values3.map((value, index) => value + elec_errorMargin[index]);
+                                            const elec_lowerBound = values3.map((value, index) => value - elec_errorMargin[index]);
+                                    
+                                            const water_upperBound = values4.map((value, index) => value + water_errorMargin[index]);
+                                            const water_lowerBound = values4.map((value, index) => value - water_errorMargin[index]);
+                                            
+                                            
+                    
+                    
+                                            window.myChart = new Chart(ctx, {
+                                                type: 'line',
+                                                data: {
+                                                    labels: labels,
+                                                    datasets: [
+                                                        {
+                                                            label: '수도',
+                                                            data: values1,
+                                                            backgroundColor: 'rgba(53, 183, 255, 0.4)',
+                                                            borderColor: '#35B7E0',
+                                                            borderWidth: 3,
+                                                            tension: 0.3,
+                                                            yAxisID: 'y1',
+                                                            group: 'water'
+                                                        },
+                                                        {
+                                                            label: '수도 오차 범위',
+                                                            data: water_upperBound,
+                                                            borderColor: 'rgba(232, 212, 0, 0)',
+                                                            backgroundColor: 'rgba(124, 156, 255, 0.2)',
+                                                            fill: '+1',
+                                                            tension: 0.4,
+                                                            yAxisID: 'y1',
+                                                            group: 'water'
+                                                        },
+                                                        {
+                                                            label: '오차 범위2',
+                                                            data: water_lowerBound,
+                                                            borderColor: 'rgba(232, 212, 0, 0)',
+                                                            backgroundColor: 'rgba(124, 156, 255, 0.2)',
+                                                            fill: '-1',
+                                                            tension: 0.4,
+                                                            yAxisID: 'y1',
+                                                            group: 'water'
+                                                        },
+                                                        {
+                                                            label: '전기',
+                                                            data: values2,
+                                                            backgroundColor: 'rgba(229, 163, 6, 0.4)',
+                                                            borderColor: '#E5A306',
+                                                            borderWidth: 3,
+                                                            tension: 0.3,
+                                                            yAxisID: 'y2',
+                                                            group: 'electric'
+                                                        },
+                                                        {
+                                                            label: '전기 오차 범위',
+                                                            data: elec_upperBound,
+                                                            borderColor: 'rgba(232, 212, 0, 0)',
+                                                            backgroundColor: 'rgba(232, 212, 0, 0.2)',
+                                                            fill: '+1',
+                                                            tension: 0.4,
+                                                            yAxisID: 'y2',
+                                                            group: 'electric'
+                                                        },
+                                                        {
+                                                            label: '오차 범위2',
+                                                            data: elec_lowerBound,
+                                                            borderColor: 'rgba(232, 212, 0, 0)',
+                                                            backgroundColor: 'rgba(232, 212, 0, 0.2)',
+                                                            fill: '-1',
+                                                            tension: 0.4,
+                                                            yAxisID: 'y2',
+                                                            group: 'electric'
+                                                        },
+                                                    ],
+                                                },
+                                                options: {
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,
+                                                    animation: {
+                                                        duration: 1500,
+                                                        easing: 'easeOutQuart',
+                                                    },
+                                                    plugins: {
+                                                        legend: {
+                                                            labels: {
+                                                                filter: function(legendItem, chartData) {
+                                                                    return legendItem.text !== '오차 범위2';
+                                                                },
+                                                                font: {
+                                                                    family: "'Noto Sans KR', sans-serif"
+                                                                },
+                                                            },
+                                                            onClick: function(e, legendItem) {
+                                                                const chart = this.chart;
+                                                                const datasetIndex = legendItem.datasetIndex;
+                                                                const group = chart.data.datasets[datasetIndex].group;
+
+                                                                chart.data.datasets.forEach(function(dataset, index) {
+                                                                    if (dataset.group === group) {
+                                                                        dataset.hidden = !dataset.hidden; 
+                                                                        dataset.animation = {
+                                                                            duration: 1500,  
+                                                                            easing: 'easeInOutQuad',
+                                                                        };
+                                                                    }
+                                                                });
+
+                                                                chart.update();
+                                                            }
+                                                        },
+                                                    },
+                                                    
+                    
+                    
+                                                    scales: {
+                                                        x: {
+                                                            grid: {
+                                                                display: false
+                                                            },
+                                                            
+                                                            ticks: {
+                                                                font: {
+                                                                    family: "'Noto Sans KR', sans-serif",
+                                                                },
+                                                            },
+                                                        },
+                                                        y1: {
+                                                            type: 'linear',
+                                                            position: 'left',
+                                                            beginAtZero: true,
+                                                            grid: {
+                                                                display: false
+                                                            },
+                                                            min: 0,
+                                                            max: 500,
+                                                            title: {
+                                                                display: true,
+                                                                text: '수도 사용량 (L)',
+                                                                color: '#000000',
+                                                                font: {
+                                                                    family: "'Noto Sans KR', sans-serif",
+                                                                    size: 14,
+                                                                }
+                                                            }
+                                                        },
+                                                        y2: {
+                                                            type: 'linear',
+                                                            position: 'right',
+                                                            beginAtZero: true,
+                                                            grid: {
+                                                                display: false
+                                                            },
+                                                            min: 1,
+                                                            max: 2,
+                                                            title: {
+                                                                display: true,
+                                                                text: '전기 사용량 (kWh)',
+                                                                color: '#000000',
+                                                                font: {
+                                                                    family: "'Noto Sans KR', sans-serif",
+                                                                    size: 14,
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- 게시판 영역 -->
+        <div class="board-box">
+            <div class="board-header">
+                <h2 class="box-title">게시판</h2>
+                <a href="board_admin">
+                    <img src="{{ url_for('static', filename='image/plus.png') }}" alt="추가 버튼" class="plus-icon">
+                </a>
+            </div>
+            <div class="board-content">    
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style= "background-color: rgba(169, 199, 252, 0.8); border-bottom: 2px solid #ddd;">
+                            <th style="text-align: left; padding: 10px;">번호</th>
+                            <th style="text-align: left; padding: 10px;">제목</th>
+                            <th style="text-align: left; padding: 10px;">작성자</th>
+                            <th style="text-align: left; padding: 10px;">작성일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for board in board_data %}
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ board[0] }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                <a href="board_content_admin/{{ board[0] }}" style="text-decoration: none; color: #333;">
+                                    {{ board[1] }}
+                                </a>
+                            </td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ board[2] }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ board[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>    
+        </div>
+        
+        
+    </main>
+    
+    <!--스크롤 시 하단에 그림자 발생-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const headerMenu = document.querySelector(".menu-container");
+
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > 0) {
+                    headerMenu.classList.add("scrolled");
+                } else {
+                    headerMenu.classList.remove("scrolled");
+                }
+            });
+        });
+    </script>
+    <!-- 푸터 -->
+    <footer>
+        <img src="{{ url_for('static', filename='image/범일로고.png') }}" alt="범일로고" class="footer-logo-left">
+        <p>2024 Quasar. All rights reserved.</p>
+        <img src="{{ url_for('static', filename='image/경대로고.png') }}" alt="경대로고" class="footer-logo">
+    </footer>
+
+    <script>
+        // 스크롤 이동 함수
+        function scrollToFloor(floorId) {
+            const element = document.getElementById(`floor-${floorId}`);
+            const container = document.getElementById(".container");
+
+            if (element && container) {
+                const offsetLeft = element.offsetLeft;
+                container.scrollTo({
+                    left: offsetLeft,
+                    behavior: "smooth"
+                });
+
+                // 강조 효과 추가
+                element.classList.add("highlight");
+                setTimeout(() => {
+                    element.classList.remove("highlight");
+                }, 2000);
+            }
+        }
+
+        // 팝업 함수
+        const residentData = {{ resident_data | tojson }};
+
+        function showPopup(ho) {
+            const popup = document.getElementById("popup");
+            const data = residentData[ho];
+
+            if (data) {
+                document.getElementById("popup-ho").textContent = `호수: ${ho}`;
+                document.getElementById("popup-name").textContent = data.managed_entity_name;
+                document.getElementById("popup-phone").textContent = data.phone_number;
+                if (data.water_condition === 'danger') {
+                    document.getElementById("popup-status").textContent = '위험';
+                    document.getElementById("popup-status-img").src = './static/image/red_circle.png';
+                }
+
+                else if (data.water_condition === 'caution') {
+                    document.getElementById("popup-status").textContent = '주의';
+                    document.getElementById("popup-status-img").src = './static/image/yellow_circle.png';                
+                }
+
+                else {
+                    document.getElementById("popup-status").textContent = '정상';
+                    document.getElementById("popup-status-img").src = './static/image/green_circle.png'
+                }
+                
+                popup.classList.remove("hidden");
+                popup.style.display = "block";
+           
+                const labels = ['6/1',' ',' ',' ', '6/2', ' ',' ', ' ','6/3',' ',' ',' ','6/4',' ', ' ', ' ','6/5',' ', ' ', ' ', '6/6',' ', ' ', ' ', '6/7',' ', ' ', ' ']; // 예: 라벨 데이터
+                createChart(labels, data.water_usage, data.elec_usage, data.elec_predict_usage, data.water_predict_usage, data.elec_error, data.water_error);
+            }
+        }
+
+        function closePopup() {
+            const popup = document.getElementById("popup");
+            popup.classList.add("hidden");
+            popup.style.display = "none";
+        }
+        
+
+    </script>
+    <!-- 그래프를 위한 Chart.js 포함 -->
+    <script type="module" src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <!-- 팝업 그래프 관련 스크립트 -->
+    <script src="{{ url_for('static', filename='js/popup_chart.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

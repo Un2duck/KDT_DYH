@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>달력</title>
+    <style>
+        /* 달력 부분 */
+        .calendar-container {
+            width: 280px;
+            margin: 10px auto;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .calendar-header button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .calendar-header button:hover {
+            background-color: #0d47a1;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            margin-top: 10px;
+            gap: 1px;
+        }
+
+        .day, .weekday {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .weekday {
+            font-weight: bold;
+            background-color: #e0e0e0;
+            cursor: default;
+        }
+
+        .day.empty {
+            background-color: #f9f9f9;
+            border: none;
+            cursor: default;
+        }
+
+        .day:hover {
+            background-color: #e0f7fa;
+        }
+
+        .selected-week {
+            background-color: #cce4ff;
+            font-weight: bold;
+        }
+
+        .hover-week {
+            background-color: #e0f7fa;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button onclick="changeMonth(-1)">◀ 이전</button>
+            <h3 id="month-year">{{ year }}년 {{ month }}월</h3>
+            <button onclick="changeMonth(1)">다음 ▶</button>
+        </div>
+        <div class="calendar-grid">
+            <!-- 요일 표시 -->
+            <div class="weekday">일</div>
+            <div class="weekday">월</div>
+            <div class="weekday">화</div>
+            <div class="weekday">수</div>
+            <div class="weekday">목</div>
+            <div class="weekday">금</div>
+            <div class="weekday">토</div>
+
+            {% for week in month_days %}
+                {% for day in week %}
+                    {% if day == 0 %}
+                        <div class="day empty"></div>
+                    {% else %}
+                        <div class="day" 
+                                onmouseover="hoverWeek(this)"
+                                onmouseout="resetHover(this)"
+                                onclick="selectWeek(this)">{{ day }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function changeMonth(offset) {
+            const urlParams = new URLSearchParams(window.location.search);
+            let year = parseInt(urlParams.get('year')) || new Date().getFullYear();
+            let month = parseInt(urlParams.get('month')) || new Date().getMonth() + 1;
+
+            month += offset;
+            if (month < 1) {
+                month = 12;
+                year--;
+            } else if (month > 12) {
+                month = 1;
+                year++;
+            }
+
+            window.location.href = `/calendar?year=${year}&month=${month}`;
+        }
+
+        function hoverWeek(dayElement) {
+            const weekDays = getWeekDays(dayElement);
+            weekDays.forEach(day => day.classList.add('hover-week'));
+        }
+
+        function resetHover(dayElement) {
+            const weekDays = getWeekDays(dayElement);
+            weekDays.forEach(day => day.classList.remove('hover-week'));
+        }
+
+        function selectWeek(dayElement) {
+            document.querySelectorAll('.day').forEach(day => day.classList.remove('selected-week'));
+            const weekDays = getWeekDays(dayElement);
+            weekDays.forEach(day => day.classList.add('selected-week'));
+        }
+
+        function getWeekDays(dayElement) {
+            const parentGrid = document.querySelector('.calendar-grid');
+            const allDays = Array.from(parentGrid.children).slice(7);
+            const dayIndex = allDays.indexOf(dayElement);
+            const weekStart = Math.floor(dayIndex / 7) * 7;
+            return allDays.slice(weekStart, weekStart + 7);
+        }
+    </script>
+</body>
+</html>

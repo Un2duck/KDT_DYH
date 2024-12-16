@@ -1,0 +1,2 @@
+FLASK_APP=MyWeb
+FLASK_DEBUG=True
