@@ -1,0 +1,2 @@
+FLASK_APP=nlpWEB
+FLASK_DEBUG=True
